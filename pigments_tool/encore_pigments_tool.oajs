@@ -1,0 +1,244 @@
+/*
+Encore's Pigments Tool
+2023-07-06
+*/
+
+var origin_colors = {};
+for(var i=0; i<25; i++)
+{
+    if(Orion.ObjAtLayer(i))
+    {
+        origin_colors[i] = Orion.ObjAtLayer(i).Color();
+    }
+}
+
+var layers = {
+    'RightHand' : 1,
+    'LeftHand' : 2,
+    'Shoes' : 3,
+    'Pants' : 4,
+    'Inner Shirt' : 5,
+    'Helmet' : 6,
+    'Gloves' : 7,
+    'Ring' : 8,
+    'Talisman' : 9,
+    'Necklace' : 10,
+    'Hair' : 11,
+    'Waist' : 12,
+    'Shirt' : 13,
+    'Bracelet' : 14,
+    'Face' : 15,
+    'Beard' : 16,
+    'MidTorso' : 17,
+    'Earrings' : 18,
+    'Arms' : 19,
+    'Cloak' : 20,
+    'Backpack' : 21,
+    'Robe' : 22,
+    'Eggs' : 23,
+    'Legs' : 24
+}
+
+var COLOR_BASE_SERIAL = 1000;
+var colors = {
+    '[Haochi] Celtic Lime':'0x0AAD',
+    '[Haochi] Minocian Fire':'0x0AB0',
+    '[Haochi] Campion White':'0x0AB2',
+    '[Haochi] Yewish Pine':'0x0AB1',
+    '[Haochi] Heartwood Sienna':'0x0AB3',
+    '[Haochi] Dark Reddish-Brown':'0x047C',
+    "[Haochi] Ghost's Gray":'0x03E8',
+    '[Haochi] Ocean Blue':'0x04AB',
+    '[Haochi] Smoky Gold':'0x0709',
+    '[Haochi] Emerald':'0x0495',
+    '[Haochi] Midnight Blue':'0x0484',
+    '[Haochi] Olive':'0x04AC',
+    '[Haochi] Yellow':'0x0491',
+    '[Haochi] Ninja Black':'0x0454',
+    '[Haochi] Pretty Pink':'0x0490',
+    '[Clean] Aura of Amber':'0x07AF',
+    '[Clean] Glossy Blue':'0x077C',
+    '[Clean] Mottled Sunset Blue':'0x0A9A',
+    '[Clean] Shadowy Blue':'0x07A8',
+    '[Clean] Black and Green':'0x07BB',
+    '[Clean] Glossy Fuchsia':'0x077F',
+    '[Clean] Murky Amber':'0x07C5',
+    '[Clean] Star Blue':'0x0AA3',
+    '[Clean] Dark Void':'0x0814',
+    '[Clean] Intense Teal':'0x0A83',
+    '[Clean] Murky Seagreen':'0x07C8',
+    '[Clean] Tyrian Purple':'0x0A9C',
+    '[Clean] Deep Blue':'0x0793',
+    '[Clean] Liquid Sunshine':'0x0783',
+    '[Clean] Olive Green':'0x0A95',
+    '[Clean] Vibrant Crimson':'0x07AC',
+    '[Clean] Deep Violet':'0x0789',
+    '[Clean] Mossy Green':'0x0A7C',
+    '[Clean] Polished Bronze':'0x0798',
+    '[Clean] Vibrant Ocher':'0x0AA5',
+    '[Clean] Gleaming Fuschia':'0x078A',
+    '[Clean] Mother of Pearl':'0x0AA0',
+    '[Clean] Reflective Shadow':'0x0776',
+    '[Clean] Vibrant Seagreen':'0x07B2',
+    '[Natural] Dull Ruby':'0x0AAB',
+    '[Natural] Zento Orchid':'0x0AAC',
+    '[Natural] Poppie White':'0x0AAF',
+    '[Natural] Umbran Violet':'0x0AB4',
+    '[Natural] Wind Azul':'0x0AB5',
+    '[Natural] Black':'0x0497',
+    '[Natural] Blue':'0x084A',
+    '[Natural] Bright Blue':'0x051E',
+    '[Natural] Bright Green':'0x029F',
+    '[Natural] Bright Orange':'0x05DD',
+    '[Natural] Bright Purple':'0x013C',
+    '[Natural] Bright Red':'0x066E',
+    '[Natural] Bright Yellow':'0x00FD',
+    '[Natural] Dark Blue':'0x0525',
+    '[Natural] Dark Green':'0x0591',
+    '[Natural] Dark Orange':'0x05E5',
+    '[Natural] Dark Purple':'0x04E6',
+    '[Natural] Dark Red':'0x0475',
+    '[Natural] Dark Yellow':'0x08A9',
+    '[Natural] Green':'0x0850',
+    '[Natural] Ice Black':'0x0451',
+    '[Natural] Ice Blue':'0x0482',
+    '[Natural] Ice Green':'0x0105',
+    '[Natural] Ice Orange':'0x015A',
+    '[Natural] Ice Purple':'0x01FF',
+    '[Natural] Ice Red':'0x014F',
+    '[Natural] Ice Yellow':'0x0038',
+    '[Natural] Off White':'0x02EA',
+    '[Natural] Rare Aqua':'0x0187',
+    '[Natural] Rare Fire Red':'0x054E',
+    '[Natural] Rare Magenta':'0x048B',
+    '[Natural] Rare Pink':'0x0155',
+    '[Natural] Luna White':'0x047E',
+    '[Natural] Red':'0x0674',
+    '[Natural] Metal':'0x0976',
+    '[Natural] Orange':'0x0468',
+    '[Natural] Plain':'0x0835',
+    '[Natural] Purple':'0x000F',
+    '[Natural] Yellow':'0x084D',
+}
+
+
+function test_color()
+{
+   // Create new custom gump with serial 15
+   var gump = Orion.CreateCustomGump(16);
+
+	// Clear gump cpntents (for rebuilds)
+	gump.Clear();
+
+	// Set callback function
+	gump.SetCallback('gump_callback');
+
+	// Main background
+	gump.AddResizepic(0, 0, '13BE', 1400, 655);
+
+    var itemSerial = 100;
+
+    // banner
+    gump.AddGumpPic(15, 15, '0x0064');
+    gump.AddText(50, 45, '0x0783', "Encore's");
+    gump.AddText(50, 60, '0x0783', "Pigments Tool");
+    
+    
+    //
+    gump.AddText(200, 20, '0', "Okay after choosing a color :");
+    
+    // okay 버튼 100
+	gump.AddButton(itemSerial++, 390, 20, '0x00F9', '0x00F7', '0x00F8', '0');
+    gump.AddTooltip('Change color!');
+    // default 버튼 101
+	gump.AddButton(itemSerial++, 460, 20, '0x00F6', '0x00F5', '0x00F4', '0');
+    gump.AddTooltip('Back to original color!');
+
+    // 주의
+    gump.AddText(700, 15, '28', "COUATION! : Color changes are visible only to you.");
+    gump.AddText(700, 30, '28', "Pigments may not apply to some equipment.");
+    // gump.AddText(700, 35, '28', "moving the map (recall) will bring it back to its original color.");
+
+
+    // split bar
+    for(var i=0; i<10 ; i++)
+    {
+        gump.AddTilePic(145, 63*i, '0x0036');
+    }
+    
+    // cancel 버튼
+    // gump.AddButton(itemSerial++, 700, 30, '0x00F3', '0x00F2', '0x00F1', '0');
+    
+    // input textbox
+	// gump.AddTextEntry(itemSerial++, 180, 30, '0x0035', '0x0000', 190, 20);
+    // gump.SetTextEntryPlaceholderText('custom color');
+    
+    //
+    gump.AddText(20, 120, '0', "Select target layer :");    
+    
+    gump.AddGroup(1);
+    
+    // 색깔선택 백그라운드
+    gump.AddResizepic(190, 55, '0x0BB8', 1200, 570);
+    var tmp = 0;
+    var tmp_x = 0;
+    for(var k in colors)
+    {
+        gump.AddTilePic(200+(tmp_x*250), 65+(30*(tmp%18)), '0x1F03',colors[k]);
+        if(tmp==0)
+        {
+            gump.AddRadio(COLOR_BASE_SERIAL+tmp, 260+(tmp_x*250), 65+(30*(tmp%18)), '0x868', '0x868', '0x86A', 1, '0', k, colors[k]);
+        }
+        else
+        {
+            gump.AddRadio(COLOR_BASE_SERIAL+tmp, 260+(tmp_x*250), 65+(30*(tmp%18)), '0x868', '0x868', '0x86A', 0, '0', k, colors[k]);
+        }
+
+        if((tmp+1)%18 == 0)
+        {
+            tmp_x++;
+        }
+        tmp++;
+    }
+
+    tmp = 0;
+    for(var k in layers)
+    {
+        gump.AddCheckbox(layers[k], 10, 145+(20*tmp), '0x2342', '0x2342', '0x2343', 0, '0', k);
+        tmp++;
+    }
+
+    // Commit gump changes and update it in client
+	gump.Update();
+}
+
+function gump_callback()
+{
+    var code = CustomGumpResponse.ReturnCode();
+
+    // okay 버튼
+    if(code == 100)
+    {
+        var checked_layer = CustomGumpResponse.Checks();
+        for(i in checked_layer)
+        {
+            var item = Orion.ObjAtLayer(checked_layer[i]);
+            if(item)
+            {
+                Orion.TestItemColor(item.Serial(), colors[Object.keys(colors)[CustomGumpResponse.Radios()-COLOR_BASE_SERIAL]]);
+            }
+        }
+    }
+    // 초기화 버튼
+    else if(code == 101)
+    {
+        for(k in origin_colors)
+        {
+            var item = Orion.ObjAtLayer(k);
+            if(item)
+            {
+                Orion.TestItemColor(item.Serial(), origin_colors[k]);
+            }
+        }
+    }
+}
